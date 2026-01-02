@@ -16,10 +16,8 @@ export default async function handler(req, res) {
     const { action, payload } = req.body;
     const ai = new GoogleGenAI({ apiKey });
 
-    // Use a stable model by default. 
-    // 'gemini-2.0-flash-exp' is experimental and might cause 500s if unavailable.
-    // 'gemini-1.5-flash' is the safest bet for production stability right now.
-    const MODEL_NAME = 'gemini-1.5-flash'; 
+    // Using 'gemini-2.0-flash-exp' as 'gemini-1.5-flash' returned 404 (not found/supported).
+    const MODEL_NAME = 'gemini-2.0-flash-exp';
 
     // 1. GENERATE SUMMARY
     if (action === 'GENERATE_SUMMARY') {
@@ -69,7 +67,7 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: MODEL_NAME, // 1.5 Flash supports JSON schema now
+        model: MODEL_NAME,
         contents: prompt,
         config: {
           temperature: 1.0,
@@ -143,7 +141,7 @@ export default async function handler(req, res) {
         if (match) {
           jsonResult = JSON.parse(match[1]);
         } else {
-           throw new Error("Failed to parse JSON from model response");
+           throw new Error("Failed to parse JSON from model response: " + response.text);
         }
       }
 
@@ -154,11 +152,9 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("API Execution Error:", error);
-    // Return specific error message to client for easier debugging
     return res.status(500).json({ 
       error: 'AI Processing Failed', 
       details: error.message || 'Unknown error',
-      // Only include stack in dev for security, or if needed for debugging now
       stack: error.stack 
     });
   }
