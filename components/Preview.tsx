@@ -410,7 +410,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
   };
 
   // Content Components
-  const ContactInfo = ({ vertical = false }: { vertical?: boolean }) => {
+  const ContactInfo = ({ vertical = false, colorOverride }: { vertical?: boolean, colorOverride?: string }) => {
     const items = [
       { i: Mail, t: data.personal.email },
       { i: Phone, t: data.personal.phone },
@@ -418,11 +418,14 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
       { i: Globe, t: data.personal.website },
     ].filter(x => x.t);
 
+    const finalColor = colorOverride || colors.secondary;
+    const iconColor = colorOverride || colors.primary;
+
     return (
-      <div className={`flex ${vertical ? 'flex-col gap-2' : 'flex-wrap gap-4'} text-sm opacity-90 mt-4`} style={{ color: colors.secondary }}>
+      <div className={`flex ${vertical ? 'flex-col gap-2' : 'flex-wrap gap-4'} text-sm opacity-90 mt-4`} style={{ color: finalColor }}>
         {items.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2">
-             {decorative.useIcons && <item.i className="w-3.5 h-3.5" style={{ color: colors.primary }} />}
+             {decorative.useIcons && <item.i className="w-3.5 h-3.5" style={{ color: iconColor }} />}
              <span>{item.t}</span>
           </div>
         ))}
@@ -448,7 +451,10 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
         bgStyle = { borderColor: colors.accent };
     }
 
-    const textColor = header.style === 'banner' ? colors.background : colors.text;
+    const isBanner = header.style === 'banner';
+    // If banner, the background is Primary, so text should be Background color.
+    // Otherwise text should default to Secondary.
+    const contactColor = isBanner ? colors.background : colors.secondary;
 
     return (
       <header className={containerClass} style={bgStyle}>
@@ -461,7 +467,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
          
          {layout !== 'sidebar-left' && layout !== 'sidebar-right' && (
            <div className={`mt-4 ${header.alignment === 'center' ? 'flex justify-center' : header.alignment === 'right' ? 'flex justify-end' : ''}`}>
-             <ContactInfo vertical={false} />
+             <ContactInfo vertical={false} colorOverride={contactColor} />
            </div>
          )}
          
@@ -511,14 +517,14 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
     );
   };
 
-  const Sidebar = () => (
+  const Sidebar = ({ textColor }: { textColor?: string }) => (
     <div className={`h-full flex flex-col gap-8 ${layout === 'sidebar-left' || layout === 'asymmetric' ? 'pr-6' : 'pl-6'}`} style={{ color: layout === 'asymmetric' ? colors.text : 'inherit' }}>
        
        {/* Contact in Sidebar if layout demands */}
        {(layout === 'sidebar-left' || layout === 'sidebar-right' || layout === 'asymmetric') && (
          <div>
             <h3 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-70">Contact</h3>
-            <ContactInfo vertical={true} />
+            <ContactInfo vertical={true} colorOverride={textColor} />
          </div>
        )}
 
@@ -534,7 +540,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
             <h3 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-70">Compétences</h3>
             <div className="flex flex-wrap gap-2">
               {data.skills.map(skill => (
-                <span key={skill.id} className="px-2 py-1 text-xs rounded border bg-opacity-10" style={{ borderColor: colors.accent, backgroundColor: colors.accent, color: colors.text }}>
+                <span key={skill.id} className="px-2 py-1 text-xs rounded border bg-opacity-10" style={{ borderColor: colors.accent, backgroundColor: colors.accent, color: textColor || colors.text }}>
                   {skill.name}
                 </span>
               ))}
@@ -566,7 +572,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
       <div className="flex w-full h-full relative overflow-hidden" style={containerStyle}>
         <Decorator />
         <div className="w-[30%] p-8 min-h-full relative z-10" style={{ backgroundColor: colors.secondary, color: colors.background }}>
-           <Sidebar />
+           {/* Sidebar is dark (secondary bg), so text must be light (background color) */}
+           <Sidebar textColor={colors.background} />
         </div>
         <div className="w-[70%] p-12 relative z-10">
            <Header />
@@ -603,6 +610,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
            </div>
         </div>
         <div className="w-[30%] p-8 min-h-full border-l relative z-10" style={{ borderColor: colors.accent, backgroundColor: colors.background === '#ffffff' ? '#fcfcfc' : 'rgba(0,0,0,0.02)' }}>
+           {/* Sidebar is light (mostly), so text defaults to secondary/dark is fine */}
            <Sidebar />
         </div>
       </div>
