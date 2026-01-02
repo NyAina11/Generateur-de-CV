@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       `;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.0-flash-exp',
         contents: prompt,
       });
       
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.0-flash-exp',
         contents: prompt,
       });
 
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.0-flash-exp',
         contents: prompt,
         config: {
           temperature: 1.4,
