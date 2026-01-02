@@ -1,0 +1,5 @@
+{
+  "name": "CV Forge AI",
+  "description": "Une application de création de CV intelligente utilisant l'IA Gemini pour optimiser le contenu. Édition en temps réel, export PDF haute fidélité et suggestions automatiques.",
+  "requestFramePermissions": []
+}
