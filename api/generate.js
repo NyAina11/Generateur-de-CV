@@ -1,22 +1,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Removed 'edge' runtime config to ensure stability with standard Node.js environment on Vercel
-// export const config = { runtime: 'edge' };
+export const config = {
+  runtime: 'edge', // Optional: Use Edge runtime for faster cold starts on Vercel
+};
 
-export default async function handler(req, res) {
-  // Vercel Serverless Function (Node.js) handling
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
 
   // Security Check
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server configuration error: API_KEY missing' });
+    return new Response(JSON.stringify({ error: 'Server configuration error: API_KEY missing' }), { status: 500 });
   }
 
   try {
-    const { action, payload } = req.body;
+    const { action, payload } = await req.json();
     const ai = new GoogleGenAI({ apiKey });
 
     // 1. GENERATE SUMMARY
@@ -29,11 +29,11 @@ export default async function handler(req, res) {
       `;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash', // Updated to a standard available model
+        model: 'gemini-3-flash-preview',
         contents: prompt,
       });
       
-      return res.status(200).json({ result: response.text?.trim() });
+      return new Response(JSON.stringify({ result: response.text?.trim() }), { status: 200 });
     }
 
     // 2. IMPROVE EXPERIENCE
@@ -46,11 +46,11 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3-flash-preview',
         contents: prompt,
       });
 
-      return res.status(200).json({ result: response.text?.trim() });
+      return new Response(JSON.stringify({ result: response.text?.trim() }), { status: 200 });
     }
 
     // 3. GENERATE UNIQUE DESIGN
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3-flash-preview',
         contents: prompt,
         config: {
           temperature: 1.4,
@@ -131,13 +131,16 @@ export default async function handler(req, res) {
         }
       });
 
-      return res.status(200).json(JSON.parse(response.text));
+      return new Response(response.text, { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
-    return res.status(400).json({ error: 'Unknown action' });
+    return new Response(JSON.stringify({ error: 'Unknown action' }), { status: 400 });
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: error.message }), { status: 500 });
   }
 }
