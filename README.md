@@ -1,20 +1,82 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# CV Forge AI 🚀
 
-# Run and deploy your AI Studio app
+**CV Forge AI** est une application web moderne permettant de créer, personnaliser et exporter des CV professionnels. Elle exploite la puissance de l'intelligence artificielle **Google Gemini** pour assister l'utilisateur dans la rédaction du contenu et la génération de designs uniques.
 
-This contains everything you need to run your app locally.
+## ✨ Fonctionnalités
 
-View your app in AI Studio: https://ai.studio/apps/drive/1P7OdxzcPHk81_BhgK7W4PVmniIyW9viF
+*   **📝 Éditeur Temps Réel** : Interface intuitive pour remplir les informations personnelles, expériences, formations et compétences.
+*   **🧠 Assistance IA (Gemini)** :
+    *   **Génération de résumé** : Créez une accroche percutante basée sur votre titre de poste.
+    *   **Amélioration de texte** : Reformulez vos descriptions d'expérience pour les rendre plus professionnelles et orientées action.
+    *   **Design Génératif** : Décrivez le style souhaité (ex: *"Minimaliste avec une touche de bleu tech et des bordures géométriques"*) et l'IA génère une configuration visuelle unique en temps réel.
+*   **🎨 Modèles Prédéfinis** : Choisissez parmi les styles Moderne, Classique ou Élégant, ou créez le vôtre via l'IA.
+*   **🖨️ Export PDF** : Rendu haute fidélité au format A4, optimisé pour l'impression sans marges indésirables (Full Bleed).
+*   **📱 Responsive** : Interface adaptative offrant un éditeur sur mobile/tablette et une prévisualisation zoomable.
 
-## Run Locally
+## 🛠️ Stack Technique
 
-**Prerequisites:**  Node.js
+*   **Frontend** : React 19, TypeScript, Vite.
+*   **Styling** : Tailwind CSS.
+*   **Icônes** : Lucide React.
+*   **IA** : Google GenAI SDK (`@google/genai`).
+*   **Backend** : Fonction Serverless (Node.js) pour sécuriser l'appel API et gérer les Prompts.
 
+## 🚀 Installation et Démarrage
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Prérequis
+
+*   Node.js (v18 ou supérieur)
+*   Une clé API Google Gemini (disponible sur [Google AI Studio](https://aistudio.google.com/)).
+
+### Installation
+
+1.  **Cloner le dépôt** :
+    ```bash
+    git clone https://github.com/votre-user/cv-forge-ai.git
+    cd cv-forge-ai
+    ```
+
+2.  **Installer les dépendances** :
+    ```bash
+    npm install
+    ```
+
+3.  **Configuration de l'environnement** :
+    Ce projet utilise un fichier d'API backend (`api/generate.js`) qui nécessite la clé API.
+    
+    *En local (avec Vite)*, assurez-vous que votre environnement charge la clé, ou créez un fichier `.env` à la racine :
+    ```env
+    API_KEY=votre_clé_api_google_gemini_ici
+    ```
+
+4.  **Lancer le serveur de développement** :
+    ```bash
+    npm run dev
+    ```
+
+5.  Ouvrez `http://localhost:5173` dans votre navigateur.
+
+## 📂 Structure du Projet
+
+*   `src/components/` : Contient l'interface utilisateur (`Editor.tsx`) et le moteur de rendu du CV (`Preview.tsx`).
+*   `src/services/` : Logique client (`gemini.ts`) pour communiquer avec le backend.
+*   `api/generate.js` : Point d'entrée serveur (Serverless Function) qui communique directement avec Google Gemini pour protéger la clé API.
+*   `src/types.ts` : Définitions TypeScript (Interfaces `CVData`, `DesignConfig`, etc.).
+
+## 🤖 Guide d'utilisation de l'IA
+
+### 1. Génération de Résumé
+Dans la section "Infos Personnelles", remplissez votre **Titre du poste**, puis cliquez sur l'icône **Baguette Magique** <kbd>🪄</kbd> à côté de la zone "Résumé". L'IA rédigera un paragraphe d'introduction professionnel.
+
+### 2. Amélioration d'Expérience
+Dans la section "Expérience", remplissez le **Rôle** et une description sommaire (ex: "J'ai fait du react"). Cliquez sur **Améliorer**. L'IA reformulera le texte avec un langage corporatif et des verbes d'action.
+
+### 3. Design Sur-Mesure (Feature Unique)
+Dans la barre d'outils en haut, cliquez sur l'icône **Palette Multicolore** <kbd>🎨</kbd>.
+*   Une boîte de dialogue s'ouvre.
+*   Décrivez le CV de vos rêves (ex: *"Un style cyberpunk, fond sombre, texte vert néon, police monospace"*).
+*   L'IA va générer une configuration JSON complète (couleurs, polices, espacements, décorations) et l'appliquer instantanément.
+
+## 📄 Licence
+
+Ce projet est conçu à des fins éducatives et de démonstration technique.
