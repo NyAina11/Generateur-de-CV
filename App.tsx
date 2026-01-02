@@ -252,7 +252,7 @@ function App() {
            
            {/* Scaler Wrapper */}
            {/* print:transform-none print:m-0 print:scale-100 -> CRITICAL: Removes the zoom/margin during print */}
-           <div className="transform scale-[0.6] sm:scale-[0.7] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 origin-top transition-transform duration-300 mt-8 mb-20 print:transform-none print:scale-100 print:m-0 print:w-full print:h-full">
+           <div className="transform scale-[0.6] sm:scale-[0.7] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 origin-top transition-transform duration-300 mt-8 mb-20 print:transform-none print:scale-100 print:m-0 print:w-full print:h-auto">
              <Preview data={cvData} />
            </div>
         </div>

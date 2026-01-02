@@ -754,7 +754,7 @@ const Preview: React.FC<PreviewProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-full h-full flex justify-center p-8 bg-slate-100 overflow-y-auto no-print">
+    <div className="w-full h-full flex justify-center p-8 bg-slate-100 overflow-y-auto print:p-0 print:bg-white print:overflow-visible print:block">
       <div 
         id="cv-preview"
         className="bg-white shadow-2xl print-container print:shadow-none overflow-hidden"
