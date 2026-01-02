@@ -18,9 +18,12 @@ async function callAI(action: string, payload: any) {
     });
 
     if (!response.ok) {
-      // Tentative de lecture du message d'erreur JSON, sinon texte brut
+      // Lecture du message d'erreur détaillé renvoyé par le backend
       const errorData = await response.json().catch(() => ({ error: response.statusText }));
-      throw new Error(errorData.error || `Erreur serveur (${response.status})`);
+      const errorMessage = errorData.details || errorData.error || `Erreur serveur (${response.status})`;
+      
+      console.error("Backend Error Details:", errorData);
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -31,11 +34,14 @@ async function callAI(action: string, payload: any) {
     }
     return data; 
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Service Error:", error);
-    // En cas d'erreur (ex: pas encore déployé, API 404 en local), on renvoie une valeur par défaut
-    // pour ne pas faire crasher l'interface
-    if (action === 'GENERATE_DESIGN') return null;
+    // Afficher l'erreur à l'utilisateur via une alerte pour qu'il sache ce qui se passe
+    // (en production, on utiliserait un toast notification)
+    if (action === 'GENERATE_DESIGN') {
+      alert(`Erreur de génération du design: ${error.message}`);
+      return null;
+    }
     return "";
   }
 }

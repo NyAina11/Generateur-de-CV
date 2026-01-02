@@ -65,15 +65,17 @@ function App() {
     setIsGeneratingDesign(true);
     try {
       const design = await generateUniqueDesign(designPrompt);
-      setCvData({
-        ...cvData,
-        templateId: 'unique',
-        designConfig: design
-      });
-      setShowDesignDialog(false);
+      if (design) {
+        setCvData({
+          ...cvData,
+          templateId: 'unique',
+          designConfig: design
+        });
+        setShowDesignDialog(false);
+      }
     } catch (error) {
       console.error(error);
-      alert("Erreur lors de la génération du design. Vérifiez votre clé API ou réessayez.");
+      // L'erreur est déjà gérée/affichée dans services/gemini.ts, mais on double check ici au cas où
     } finally {
       setIsGeneratingDesign(false);
     }
@@ -87,8 +89,9 @@ function App() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative border border-slate-200">
             <button 
-              onClick={() => setShowDesignDialog(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+              onClick={() => !isGeneratingDesign && setShowDesignDialog(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-50"
+              disabled={isGeneratingDesign}
             >
               <X className="w-5 h-5" />
             </button>
@@ -99,7 +102,7 @@ function App() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-slate-800">Design IA Personnalisé</h3>
-                <p className="text-xs text-slate-500 font-medium">Propulsé par Gemini 3 Flash</p>
+                <p className="text-xs text-slate-500 font-medium">Propulsé par Gemini</p>
               </div>
             </div>
             
@@ -109,7 +112,8 @@ function App() {
               </label>
               <textarea
                 autoFocus
-                className="w-full h-28 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-700 resize-none shadow-sm text-sm"
+                disabled={isGeneratingDesign}
+                className="w-full h-28 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-700 resize-none shadow-sm text-sm disabled:bg-slate-50"
                 placeholder="Ex: Je veux quelque chose de très épuré, avec beaucoup d'espace blanc, des titres en gras et une touche de jaune électrique."
                 value={designPrompt}
                 onChange={(e) => setDesignPrompt(e.target.value)}
@@ -125,7 +129,8 @@ function App() {
                   <button
                     key={i}
                     onClick={() => applySuggestion(sug)}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition-colors border border-slate-200"
+                    disabled={isGeneratingDesign}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition-colors border border-slate-200 disabled:opacity-50"
                   >
                     {sug}
                   </button>
@@ -136,14 +141,15 @@ function App() {
             <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
               <button 
                 onClick={() => setShowDesignDialog(false)}
-                className="px-4 py-2.5 text-slate-600 font-medium hover:bg-slate-50 rounded-lg transition-colors text-sm"
+                disabled={isGeneratingDesign}
+                className="px-4 py-2.5 text-slate-600 font-medium hover:bg-slate-50 rounded-lg transition-colors text-sm disabled:opacity-50"
               >
                 Annuler
               </button>
               <button 
                 onClick={handleGenerateDesign}
                 disabled={isGeneratingDesign || !designPrompt.trim()}
-                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm hover:scale-[1.02] active:scale-[0.98]"
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-sm hover:scale-[1.02] active:scale-[0.98]"
               >
                 {isGeneratingDesign ? (
                   <>

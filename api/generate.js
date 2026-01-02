@@ -1,24 +1,25 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// We remove the edge runtime config to use standard Node.js environment
-// which is more stable for the Google GenAI Node SDK.
-// export const config = { runtime: 'edge' };
-
 export default async function handler(req, res) {
-  // Check method
+  // 1. Method check
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Security Check
+  // 2. API Key Check
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server configuration error: API_KEY missing' });
+    return res.status(500).json({ error: 'Configuration Error: API_KEY is missing in server environment.' });
   }
 
   try {
     const { action, payload } = req.body;
     const ai = new GoogleGenAI({ apiKey });
+
+    // Use a stable model by default. 
+    // 'gemini-2.0-flash-exp' is experimental and might cause 500s if unavailable.
+    // 'gemini-1.5-flash' is the safest bet for production stability right now.
+    const MODEL_NAME = 'gemini-1.5-flash'; 
 
     // 1. GENERATE SUMMARY
     if (action === 'GENERATE_SUMMARY') {
@@ -30,7 +31,7 @@ export default async function handler(req, res) {
       `;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: MODEL_NAME,
         contents: prompt,
       });
       
@@ -47,7 +48,7 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: MODEL_NAME,
         contents: prompt,
       });
 
@@ -68,10 +69,10 @@ export default async function handler(req, res) {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: MODEL_NAME, // 1.5 Flash supports JSON schema now
         contents: prompt,
         config: {
-          temperature: 1.4,
+          temperature: 1.0,
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -132,13 +133,33 @@ export default async function handler(req, res) {
         }
       });
 
-      return res.status(200).json(JSON.parse(response.text));
+      // Handle potential parsing errors if the model is chatty
+      let jsonResult;
+      try {
+        jsonResult = typeof response.text === 'string' ? JSON.parse(response.text) : response.text;
+      } catch (e) {
+        // Fallback if JSON is wrapped in markdown blocks
+        const match = response.text?.match(/```json\n([\s\S]*?)\n```/);
+        if (match) {
+          jsonResult = JSON.parse(match[1]);
+        } else {
+           throw new Error("Failed to parse JSON from model response");
+        }
+      }
+
+      return res.status(200).json(jsonResult);
     }
 
     return res.status(400).json({ error: 'Unknown action' });
 
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    console.error("API Execution Error:", error);
+    // Return specific error message to client for easier debugging
+    return res.status(500).json({ 
+      error: 'AI Processing Failed', 
+      details: error.message || 'Unknown error',
+      // Only include stack in dev for security, or if needed for debugging now
+      stack: error.stack 
+    });
   }
 }
