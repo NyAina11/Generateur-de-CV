@@ -16,8 +16,9 @@ export default async function handler(req, res) {
     const { action, payload } = req.body;
     const ai = new GoogleGenAI({ apiKey });
 
-    // Using 'gemini-2.0-flash-exp' as 'gemini-1.5-flash' returned 404 (not found/supported).
-    const MODEL_NAME = 'gemini-2.0-flash-exp';
+    // Switching to 'gemini-3-flash-preview' per system guidelines for Basic Text Tasks.
+    // This often has better availability/quotas than the experimental 2.0 model.
+    const MODEL_NAME = 'gemini-3-flash-preview';
 
     // 1. GENERATE SUMMARY
     if (action === 'GENERATE_SUMMARY') {
@@ -152,6 +153,23 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("API Execution Error:", error);
+    
+    // Check for Rate Limit / Quota Exceeded
+    if (error.message?.includes('429') || error.message?.includes('Quota') || error.status === 429) {
+       return res.status(429).json({ 
+        error: 'Quota Exceeded', 
+        details: 'Le service est momentanément saturé. Veuillez réessayer dans quelques secondes.'
+      });
+    }
+
+    // Check for 404 Model Not Found (can happen if model alias changes)
+    if (error.message?.includes('404') || error.status === 404) {
+       return res.status(503).json({ 
+        error: 'Model Error', 
+        details: 'Le modèle IA est temporairement indisponible. Veuillez réessayer.'
+      });
+    }
+
     return res.status(500).json({ 
       error: 'AI Processing Failed', 
       details: error.message || 'Unknown error',

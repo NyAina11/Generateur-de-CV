@@ -20,6 +20,12 @@ async function callAI(action: string, payload: any) {
     if (!response.ok) {
       // Lecture du message d'erreur détaillé renvoyé par le backend
       const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      
+      // Message user-friendly pour les quotas
+      if (response.status === 429) {
+        throw new Error("Quota d'IA atteint. Veuillez patienter un instant avant de réessayer.");
+      }
+
       const errorMessage = errorData.details || errorData.error || `Erreur serveur (${response.status})`;
       
       console.error("Backend Error Details:", errorData);
@@ -36,11 +42,19 @@ async function callAI(action: string, payload: any) {
 
   } catch (error: any) {
     console.error("AI Service Error:", error);
-    // Afficher l'erreur à l'utilisateur via une alerte pour qu'il sache ce qui se passe
-    // (en production, on utiliserait un toast notification)
+    
+    // Affichage plus propre des erreurs à l'utilisateur
+    let msg = error.message;
+    if (msg.includes('Quota') || msg.includes('429')) {
+       msg = "Le service IA est très demandé. Merci de réessayer dans 15 secondes.";
+    }
+
     if (action === 'GENERATE_DESIGN') {
-      alert(`Erreur de génération du design: ${error.message}`);
+      alert(`Oups ! ${msg}`);
       return null;
+    } else {
+      // Pour les petites actions (résumé, amélioration), on peut utiliser alert aussi pour être sûr que l'utilisateur voit le pb
+      alert(`Erreur IA : ${msg}`);
     }
     return "";
   }
