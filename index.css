@@ -27,11 +27,16 @@ body {
 @media print {
   @page {
     margin: 0;
-    size: auto;
+    size: A4;
   }
   
-  body {
+  html, body {
+    width: 210mm;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
     background: white;
+    -webkit-print-color-adjust: exact;
   }
 
   /* Force background colors/images to print */
@@ -42,7 +47,8 @@ body {
 
   /* Reset layout for printing */
   .print-container {
-    width: 100% !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
     height: auto !important;
     box-shadow: none !important;
     border: none !important;
