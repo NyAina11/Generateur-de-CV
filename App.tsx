@@ -75,18 +75,18 @@ function App() {
       }
     } catch (error) {
       console.error(error);
-      // L'erreur est déjà gérée/affichée dans services/gemini.ts, mais on double check ici au cas où
+      // L'erreur est déjà gérée/affichée dans services/gemini.ts
     } finally {
       setIsGeneratingDesign(false);
     }
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-100 overflow-hidden relative">
+    <div className="h-screen w-screen flex flex-col bg-slate-100 overflow-hidden relative print:h-auto print:overflow-visible">
       
-      {/* Design Prompt Modal */}
+      {/* Design Prompt Modal - Hidden on print */}
       {showDesignDialog && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 print:hidden">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative border border-slate-200">
             <button 
               onClick={() => !isGeneratingDesign && setShowDesignDialog(false)}
@@ -168,8 +168,8 @@ function App() {
         </div>
       )}
 
-      {/* Top Bar - No Print */}
-      <nav className="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm z-20 no-print">
+      {/* Top Bar - Hidden on Print */}
+      <nav className="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm z-20 print:hidden">
         <div className="flex items-center gap-3">
           <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 rounded-lg text-white">
              <Sparkles className="w-5 h-5" />
@@ -240,15 +240,19 @@ function App() {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
-        {/* Left Panel: Editor */}
-        <div className="w-full lg:w-5/12 h-full bg-white z-10 no-print shadow-2xl">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden relative print:overflow-visible print:h-auto print:block">
+        {/* Left Panel: Editor - Hidden on Print */}
+        <div className="w-full lg:w-5/12 h-full bg-white z-10 shadow-2xl print:hidden">
           <Editor data={cvData} onChange={setCvData} />
         </div>
 
         {/* Right Panel: Preview */}
-        <div className="w-full lg:w-7/12 h-full bg-slate-200/50 flex justify-center overflow-auto relative custom-scrollbar">
-           <div className="transform scale-[0.6] sm:scale-[0.7] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 origin-top transition-transform duration-300 mt-8 mb-20">
+        {/* print:w-full print:block print:h-auto print:static -> Ensures the container flows normally on paper */}
+        <div className="w-full lg:w-7/12 h-full bg-slate-200/50 flex justify-center overflow-auto relative custom-scrollbar print:w-full print:h-auto print:bg-white print:overflow-visible print:block print:static">
+           
+           {/* Scaler Wrapper */}
+           {/* print:transform-none print:m-0 print:scale-100 -> CRITICAL: Removes the zoom/margin during print */}
+           <div className="transform scale-[0.6] sm:scale-[0.7] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 origin-top transition-transform duration-300 mt-8 mb-20 print:transform-none print:scale-100 print:m-0 print:w-full print:h-full">
              <Preview data={cvData} />
            </div>
         </div>

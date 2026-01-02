@@ -757,7 +757,7 @@ const Preview: React.FC<PreviewProps> = ({ data }) => {
     <div className="w-full h-full flex justify-center p-8 bg-slate-100 overflow-y-auto no-print">
       <div 
         id="cv-preview"
-        className="bg-white shadow-2xl print-container overflow-hidden"
+        className="bg-white shadow-2xl print-container print:shadow-none overflow-hidden"
         style={{
           width: '210mm',
           minHeight: '297mm',
