@@ -213,11 +213,12 @@ const ElegantTemplate: React.FC<PreviewProps> = ({ data }) => {
              {data.personal.fullName.charAt(0)}
            </div>
            <h1 className="text-2xl font-bold leading-tight mb-2">{data.personal.fullName}</h1>
-           <p className="text-white/90 font-medium">{data.personal.jobTitle}</p>
+           {/* Avoid opacity property for text crispness, use solid lighter color equivalent */}
+           <p className="text-slate-100 font-medium">{data.personal.jobTitle}</p>
         </div>
 
         {/* Contact */}
-        <div className="space-y-3 text-sm text-white/90">
+        <div className="space-y-3 text-sm text-slate-100">
            {data.personal.email && <div className="flex items-center gap-2 break-all"><Mail className="w-4 h-4 shrink-0" /> {data.personal.email}</div>}
            {data.personal.phone && <div className="flex items-center gap-2"><Phone className="w-4 h-4 shrink-0" /> {data.personal.phone}</div>}
            {data.personal.location && <div className="flex items-center gap-2"><MapPin className="w-4 h-4 shrink-0" /> {data.personal.location}</div>}
@@ -227,7 +228,7 @@ const ElegantTemplate: React.FC<PreviewProps> = ({ data }) => {
         {/* Skills */}
         {data.skills.length > 0 && (
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white/60 mb-4 border-b border-white/20 pb-1">Compétences</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4 border-b border-white/20 pb-1">Compétences</h3>
             <div className="space-y-2">
               {data.skills.map((skill) => (
                 <div key={skill.id}>
@@ -421,8 +422,9 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
     const finalColor = colorOverride || colors.secondary;
     const iconColor = colorOverride || colors.primary;
 
+    // REMOVED: opacity-90 to prevent text rasterization blur in PDF
     return (
-      <div className={`flex ${vertical ? 'flex-col gap-2' : 'flex-wrap gap-4'} text-sm opacity-90 mt-4`} style={{ color: finalColor }}>
+      <div className={`flex ${vertical ? 'flex-col gap-2' : 'flex-wrap gap-4'} text-sm mt-4`} style={{ color: finalColor }}>
         {items.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2">
              {decorative.useIcons && <item.i className="w-3.5 h-3.5" style={{ color: iconColor }} />}
@@ -461,7 +463,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
          <h1 className={`${nameClass} font-bold leading-none mb-2`} style={{ fontFamily: fonts.heading, color: header.style === 'banner' ? 'white' : colors.text }}>
            {data.personal.fullName}
          </h1>
-         <p className="text-xl font-medium opacity-90" style={{ color: header.style === 'banner' ? 'rgba(255,255,255,0.8)' : colors.primary }}>
+         {/* REMOVED: opacity-90 */}
+         <p className="text-xl font-medium" style={{ color: header.style === 'banner' ? 'rgba(255,255,255,0.9)' : colors.primary }}>
            {data.personal.jobTitle}
          </p>
          
@@ -472,8 +475,9 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
          )}
          
          {/* Summary in header for single column layouts sometimes looks good */}
+         {/* REMOVED: opacity-80 */}
          {data.personal.summary && layout === 'single-column' && header.alignment === 'center' && (
-             <p className="mt-6 max-w-lg opacity-80 text-sm leading-relaxed">{data.personal.summary}</p>
+             <p className="mt-6 max-w-lg text-sm leading-relaxed">{data.personal.summary}</p>
          )}
       </header>
     );
@@ -488,7 +492,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
             <span className="text-xs font-bold px-2 py-1 rounded" style={{ backgroundColor: colors.primary + '20', color: colors.primary }}>{exp.startDate} - {exp.endDate}</span>
           </div>
           <div className="font-medium text-sm mb-3" style={{ color: colors.secondary }}>{exp.company}</div>
-          <p className="text-sm opacity-80 leading-relaxed whitespace-pre-wrap">{exp.description}</p>
+          {/* REMOVED: opacity-80 */}
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{exp.description}</p>
         </div>
       );
     }
@@ -498,8 +503,10 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
             <div className="relative pl-6 border-l-2" style={{ borderColor: colors.accent }}>
                 <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full" style={{ backgroundColor: colors.primary }}></div>
                 <h4 className="font-bold text-lg leading-none mb-1" style={{ color: colors.text }}>{exp.role}</h4>
-                <div className="text-sm mb-2 opacity-70" style={{ color: colors.secondary }}>{exp.company} | {exp.startDate} - {exp.endDate}</div>
-                <p className="text-sm opacity-90 leading-relaxed whitespace-pre-wrap">{exp.description}</p>
+                {/* REMOVED: opacity-70 */}
+                <div className="text-sm mb-2" style={{ color: colors.secondary }}>{exp.company} | {exp.startDate} - {exp.endDate}</div>
+                {/* REMOVED: opacity-90 */}
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{exp.description}</p>
             </div>
         )
     }
@@ -509,10 +516,12 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
       <div className={`mb-6 ${sections.style === 'left-border' ? 'border-l-4 pl-4' : ''}`} style={{ borderColor: colors.primary }}>
          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
             <h4 className="font-bold text-lg" style={{ color: colors.text }}>{exp.role}</h4>
-            <span className="text-sm font-medium opacity-60" style={{ color: colors.secondary }}>{exp.startDate} - {exp.endDate}</span>
+            {/* REMOVED: opacity-60, replaced with secondary color */}
+            <span className="text-sm font-medium" style={{ color: colors.secondary }}>{exp.startDate} - {exp.endDate}</span>
          </div>
          <div className="text-sm font-semibold mb-2" style={{ color: colors.primary }}>{exp.company}</div>
-         <p className="text-sm leading-relaxed opacity-80 whitespace-pre-wrap">{exp.description}</p>
+         {/* REMOVED: opacity-80 */}
+         <p className="text-sm leading-relaxed whitespace-pre-wrap">{exp.description}</p>
       </div>
     );
   };
@@ -523,21 +532,25 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
        {/* Contact in Sidebar if layout demands */}
        {(layout === 'sidebar-left' || layout === 'sidebar-right' || layout === 'asymmetric') && (
          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-70">Contact</h3>
+            {/* REMOVED: opacity-70 */}
+            <h3 className="text-xs font-bold uppercase tracking-wider mb-4">Contact</h3>
             <ContactInfo vertical={true} colorOverride={textColor} />
          </div>
        )}
 
        {data.personal.summary && (layout === 'sidebar-left' || layout === 'sidebar-right') && (
          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider mb-2 opacity-70">Profil</h3>
-            <p className="text-sm leading-relaxed opacity-90">{data.personal.summary}</p>
+            {/* REMOVED: opacity-70 */}
+            <h3 className="text-xs font-bold uppercase tracking-wider mb-2">Profil</h3>
+            {/* REMOVED: opacity-90 */}
+            <p className="text-sm leading-relaxed">{data.personal.summary}</p>
          </div>
        )}
 
        {data.skills.length > 0 && (
          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-70">Compétences</h3>
+            {/* REMOVED: opacity-70 */}
+            <h3 className="text-xs font-bold uppercase tracking-wider mb-4">Compétences</h3>
             <div className="flex flex-wrap gap-2">
               {data.skills.map(skill => (
                 <span key={skill.id} className="px-2 py-1 text-xs rounded border bg-opacity-10" style={{ borderColor: colors.accent, backgroundColor: colors.accent, color: textColor || colors.text }}>
@@ -550,13 +563,16 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
 
        {data.education.length > 0 && (layout.includes('sidebar') || layout === 'asymmetric') && (
          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider mb-4 opacity-70">Formation</h3>
+            {/* REMOVED: opacity-70 */}
+            <h3 className="text-xs font-bold uppercase tracking-wider mb-4">Formation</h3>
             <div className="space-y-4">
               {data.education.map(edu => (
                 <div key={edu.id}>
                   <div className="font-bold text-sm">{edu.school}</div>
-                  <div className="text-xs opacity-80">{edu.degree}</div>
-                  <div className="text-xs opacity-50">{edu.year}</div>
+                  {/* REMOVED: opacity-80 */}
+                  <div className="text-xs">{edu.degree}</div>
+                  {/* REMOVED: opacity-50 */}
+                  <div className="text-xs">{edu.year}</div>
                 </div>
               ))}
             </div>
@@ -626,7 +642,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
             <div className="col-span-4">
                <div className="mb-8">
                   <SectionTitle title="Profil" />
-                  <p className="text-sm opacity-80 leading-relaxed">{data.personal.summary}</p>
+                  {/* REMOVED: opacity-80 */}
+                  <p className="text-sm leading-relaxed">{data.personal.summary}</p>
                </div>
                <div className="mb-8">
                   <SectionTitle title="Compétences" />
@@ -647,7 +664,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
                     {data.education.map(edu => (
                       <div key={edu.id}>
                         <div className="font-bold text-sm">{edu.school}</div>
-                        <div className="text-xs opacity-70">{edu.degree}</div>
+                        {/* REMOVED: opacity-70 */}
+                        <div className="text-xs">{edu.degree}</div>
                       </div>
                     ))}
                   </div>
@@ -675,7 +693,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
                 <h1 className={`${nameClass} font-black mb-2 leading-none`} style={{ color: colors.primary, fontFamily: fonts.heading }}>{data.personal.fullName}</h1>
                 <p className="text-xl font-bold mb-8" style={{ color: colors.secondary }}>{data.personal.jobTitle}</p>
                 
-                {data.personal.summary && <p className="text-sm mb-12 opacity-80 border-l-4 pl-4" style={{ borderColor: colors.primary }}>{data.personal.summary}</p>}
+                {/* REMOVED: opacity-80 */}
+                {data.personal.summary && <p className="text-sm mb-12 border-l-4 pl-4" style={{ borderColor: colors.primary }}>{data.personal.summary}</p>}
 
                 <SectionTitle title="Expérience Professionnelle" />
                 <div className="space-y-8 mt-6">
@@ -684,7 +703,8 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
             </div>
 
             <div className="col-span-1 pt-20">
-                <div className="bg-white/50 p-6 backdrop-blur-sm rounded-xl border border-white/20 shadow-sm">
+                {/* REMOVED: backdrop-blur-sm and changed bg to solid white for vector sharpness */}
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                    <Sidebar />
                 </div>
             </div>
@@ -718,8 +738,10 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
                       {data.education.map(edu => (
                         <div key={edu.id} className="border-l-2 pl-3" style={{ borderColor: colors.accent }}>
                           <div className="font-bold text-sm">{edu.school}</div>
-                          <div className="text-xs opacity-70">{edu.degree}</div>
-                          <div className="text-xs opacity-50">{edu.year}</div>
+                          {/* REMOVED: opacity-70 */}
+                          <div className="text-xs">{edu.degree}</div>
+                          {/* REMOVED: opacity-50 */}
+                          <div className="text-xs">{edu.year}</div>
                         </div>
                       ))}
                     </div>
