@@ -84,6 +84,15 @@ function App() {
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-100 overflow-hidden relative print:h-auto print:overflow-visible">
       
+      {/* --- MOBILE FLOATING EXPORT BUTTON --- */}
+      <button
+        onClick={handlePrint}
+        className="fixed bottom-6 right-6 z-50 lg:hidden bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:bg-slate-800 transition-transform active:scale-90 print:hidden flex items-center justify-center"
+        title="Exporter en PDF"
+      >
+        <Printer className="w-6 h-6" />
+      </button>
+
       {/* Design Prompt Modal - Hidden on print */}
       {showDesignDialog && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 print:hidden">
@@ -169,19 +178,20 @@ function App() {
       )}
 
       {/* Top Bar - Hidden on Print */}
-      <nav className="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm z-20 print:hidden">
-        <div className="flex items-center gap-3">
+      <nav className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex justify-between items-center shadow-sm z-20 print:hidden">
+        <div className="flex items-center gap-3 shrink-0">
           <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 rounded-lg text-white">
              <Sparkles className="w-5 h-5" />
           </div>
-          <h1 className="font-bold text-xl text-slate-800 tracking-tight">CV Forge AI</h1>
+          <h1 className="font-bold text-xl text-slate-800 tracking-tight hidden sm:block">CV Forge AI</h1>
         </div>
         
-        <div className="flex items-center gap-6">
+        {/* Toolbar - Scrollable on mobile */}
+        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto max-w-full pb-1 sm:pb-0 custom-scrollbar lg:overflow-visible">
           
           {/* Template Selector */}
-          <div className="flex items-center gap-3 border-r border-slate-200 pr-6">
-            <span className="text-xs font-medium text-slate-500 uppercase flex items-center gap-1">
+          <div className="flex items-center gap-2 sm:gap-3 border-r border-slate-200 pr-4 sm:pr-6 shrink-0">
+            <span className="text-xs font-medium text-slate-500 uppercase flex items-center gap-1 hidden sm:flex">
               <LayoutTemplate className="w-3 h-3" /> Modèle
             </span>
             <div className="flex bg-slate-100 rounded-lg p-1 gap-1">
@@ -220,8 +230,8 @@ function App() {
 
           {/* Theme Selector (Only for preset templates) */}
           {cvData.templateId !== 'unique' && (
-            <div className="flex items-center gap-2 animate-in fade-in duration-300">
-              <span className="text-xs font-medium text-slate-500 uppercase">Thème</span>
+            <div className="flex items-center gap-2 animate-in fade-in duration-300 shrink-0">
+              <span className="text-xs font-medium text-slate-500 uppercase hidden sm:block">Thème</span>
               <button onClick={() => changeTheme('#2563eb')} className="w-5 h-5 rounded-full bg-blue-600 border border-slate-200 hover:scale-110 transition-transform"></button>
               <button onClick={() => changeTheme('#059669')} className="w-5 h-5 rounded-full bg-emerald-600 border border-slate-200 hover:scale-110 transition-transform"></button>
               <button onClick={() => changeTheme('#dc2626')} className="w-5 h-5 rounded-full bg-red-600 border border-slate-200 hover:scale-110 transition-transform"></button>
@@ -229,9 +239,10 @@ function App() {
             </div>
           )}
           
+          {/* DESKTOP EXPORT BUTTON (Hidden on mobile) */}
           <button 
             onClick={handlePrint}
-            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-full font-medium transition-all shadow-lg hover:shadow-xl active:scale-95 ml-2"
+            className="hidden lg:flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-full font-medium transition-all shadow-lg hover:shadow-xl active:scale-95 ml-2"
           >
             <Printer className="w-4 h-4" />
             <span>Exporter</span>
