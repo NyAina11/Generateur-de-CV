@@ -2,9 +2,18 @@
 
 **CV Forge AI** est une application web moderne permettant de créer, personnaliser et exporter des CV professionnels. Elle exploite la puissance de l'intelligence artificielle **Google Gemini** pour assister l'utilisateur dans la rédaction du contenu et la génération de designs uniques.
 
+## 💡 Approche et Philosophie
+
+Cette application a été conçue autour de trois piliers fondamentaux pour repenser la création de CV :
+
+1.  **L'IA comme Architecte Visuel** : Au-delà de la simple rédaction de texte, nous utilisons Gemini pour manipuler la structure JSON de l'application. Cela permet à l'utilisateur de générer des mises en pages (layouts), des palettes de couleurs et des typographies entièrement nouvelles simplement en les décrivant en langage naturel.
+2.  **Rendu "Print-Perfect"** : L'architecture sépare strictement la logique d'édition (Formulaires React) du moteur de rendu. La prévisualisation est calibrée au millimètre près pour le format A4 via CSS Grid et Flexbox, garantissant que le PDF exporté est identique à l'écran, sans les problèmes de marges classiques du web.
+3.  **Performance & Confidentialité** : L'application fonctionne comme une SPA (Single Page Application) ultra-rapide utilisant React 19. Les données sensibles de l'utilisateur restent locales le plus longtemps possible, et les appels à l'IA sont sécurisés via une fonction serverless proxy pour ne jamais exposer les clés API côté client.
+
 ## ✨ Fonctionnalités
 
 *   **📝 Éditeur Temps Réel** : Interface intuitive pour remplir les informations personnelles, expériences, formations et compétences.
+*   **📸 Photo de Profil** : Support complet pour l'ajout, la prévisualisation et l'intégration de photos (encodage Base64 local), avec adaptation automatique des mises en page.
 *   **🧠 Assistance IA (Gemini)** :
     *   **Génération de résumé** : Créez une accroche percutante basée sur votre titre de poste.
     *   **Amélioration de texte** : Reformulez vos descriptions d'expérience pour les rendre plus professionnelles et orientées action.
