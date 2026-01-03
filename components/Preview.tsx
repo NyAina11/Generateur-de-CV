@@ -218,9 +218,10 @@ const ElegantTemplate: React.FC<PreviewProps> = ({ data }) => {
   const themeColor = data.themeColor || '#2563eb';
   
   return (
-    <div className="w-full h-full bg-white flex">
+    <div className="w-full min-h-[297mm] bg-white flex">
       {/* Sidebar */}
-      <div className="w-[32%] h-full text-white p-8 flex flex-col gap-8 print:bg-red-500" style={{ backgroundColor: themeColor, WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+      {/* Removed h-full to allow flex stretch to control height based on container min-height */}
+      <div className="w-[32%] text-white p-8 flex flex-col gap-8 print:bg-red-500" style={{ backgroundColor: themeColor, WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
         {/* Profile */}
         <div className="text-center sm:text-left">
            <div className="w-24 h-24 bg-white/20 rounded-full mx-auto sm:mx-0 mb-4 overflow-hidden shrink-0 flex items-center justify-center text-4xl font-bold">
@@ -626,7 +627,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
   
   if (layout === 'sidebar-left') {
     return (
-      <div className="flex w-full h-full relative overflow-hidden" style={containerStyle}>
+      <div className="flex w-full min-h-[297mm] relative overflow-hidden" style={containerStyle}>
         <Decorator />
         <div className="w-[30%] p-8 min-h-full relative z-10" style={{ backgroundColor: colors.secondary, color: colors.background }}>
            {/* Sidebar is dark (secondary bg), so text must be light (background color) */}
@@ -651,7 +652,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
 
   if (layout === 'sidebar-right') {
      return (
-      <div className="flex w-full h-full relative overflow-hidden" style={containerStyle}>
+      <div className="flex w-full min-h-[297mm] relative overflow-hidden" style={containerStyle}>
         <Decorator />
         <div className="w-[70%] p-12 relative z-10">
            <Header />
@@ -725,7 +726,7 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
 
   if (layout === 'asymmetric') {
     return (
-      <div className="w-full h-full relative overflow-hidden p-12" style={containerStyle}>
+      <div className="w-full min-h-[297mm] relative overflow-hidden p-12" style={containerStyle}>
         <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', backgroundColor: colors.accent, opacity: 0.1, zIndex: 0 }}></div>
         <Decorator />
         
