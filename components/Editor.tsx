@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Plus, Trash2, Wand2, ChevronDown, ChevronUp, Briefcase, GraduationCap, User, Wrench } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, Trash2, Wand2, ChevronDown, ChevronUp, Briefcase, GraduationCap, User, Wrench, Camera, X } from 'lucide-react';
 import { CVData, Experience, Education, Skill } from '../types';
 import { generateSummary, improveExperienceDescription } from '../services/gemini';
 
@@ -11,6 +11,7 @@ interface EditorProps {
 const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
   const [activeSection, setActiveSection] = useState<string | null>('personal');
   const [aiLoading, setAiLoading] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleSection = (section: string) => {
     setActiveSection(activeSection === section ? null : section);
@@ -21,6 +22,24 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
       ...data,
       personal: { ...data.personal, [field]: value }
     });
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updatePersonal('photo', reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    updatePersonal('photo', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   // --- Experience Handlers ---
@@ -134,6 +153,44 @@ const Editor: React.FC<EditorProps> = ({ data, onChange }) => {
           
           {activeSection === 'personal' && (
             <div className="p-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              
+              {/* Photo Upload */}
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
+                  {data.personal.photo ? (
+                    <img src={data.personal.photo} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-8 h-8 text-slate-300" />
+                  )}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-md font-medium hover:bg-indigo-100 transition-colors flex items-center gap-1"
+                    >
+                      <Camera className="w-3 h-3" />
+                      {data.personal.photo ? 'Changer' : 'Ajouter photo'}
+                    </button>
+                    {data.personal.photo && (
+                      <button 
+                        onClick={removePhoto}
+                        className="text-xs px-2 py-1.5 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input 
                   type="text" placeholder="Nom complet" 

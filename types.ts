@@ -28,6 +28,7 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   website: string;
+  photo?: string; // Base64 image string
   summary: string;
 }
 

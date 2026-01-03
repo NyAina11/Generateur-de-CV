@@ -22,16 +22,23 @@ const ModernTemplate: React.FC<PreviewProps> = ({ data }) => {
     <div className="w-full h-full p-[12mm] bg-white text-slate-800">
       {/* Header */}
       <header className="border-b-2 pb-6 mb-8" style={{ borderColor: themeColor }}>
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-bold text-slate-900 tracking-tight uppercase mb-2">
-              {data.personal.fullName || 'Votre Nom'}
-            </h1>
-            <h2 className="text-xl font-medium" style={{ color: themeColor }}>
-              {data.personal.jobTitle || 'Titre du poste'}
-            </h2>
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex items-start gap-6 flex-1">
+             {data.personal.photo && (
+               <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 border-2" style={{ borderColor: themeColor }}>
+                 <img src={data.personal.photo} alt="Profile" className="w-full h-full object-cover" />
+               </div>
+             )}
+             <div className="flex-1">
+                <h1 className="text-4xl font-bold text-slate-900 tracking-tight uppercase mb-2">
+                  {data.personal.fullName || 'Votre Nom'}
+                </h1>
+                <h2 className="text-xl font-medium" style={{ color: themeColor }}>
+                  {data.personal.jobTitle || 'Titre du poste'}
+                </h2>
+             </div>
           </div>
-          <div className="text-right text-xs text-slate-600 space-y-1">
+          <div className="text-right text-xs text-slate-600 space-y-1 min-w-[150px]">
             {data.personal.email && <div className="flex justify-end"><ContactItem icon={Mail} text={data.personal.email} /></div>}
             {data.personal.phone && <div className="flex justify-end"><ContactItem icon={Phone} text={data.personal.phone} /></div>}
             {data.personal.location && <div className="flex justify-end"><ContactItem icon={MapPin} text={data.personal.location} /></div>}
@@ -120,19 +127,26 @@ const ClassicTemplate: React.FC<PreviewProps> = ({ data }) => {
   return (
     <div className="w-full h-full p-[15mm] bg-white text-slate-900 font-serif">
       {/* Header */}
-      <header className="text-center border-b-2 border-slate-800 pb-6 mb-8">
-        <h1 className="text-4xl font-bold uppercase tracking-widest mb-2 font-serif">
-          {data.personal.fullName || 'Votre Nom'}
-        </h1>
-        <h2 className="text-lg italic text-slate-600 mb-4 font-serif">
-          {data.personal.jobTitle || 'Titre du poste'}
-        </h2>
-        
-        <div className="flex flex-wrap justify-center gap-4 text-xs font-sans text-slate-600 uppercase tracking-wider">
-          {data.personal.email && <div className="flex items-center gap-1"><Mail className="w-3 h-3" /> {data.personal.email}</div>}
-          {data.personal.phone && <div className="flex items-center gap-1"><Phone className="w-3 h-3" /> {data.personal.phone}</div>}
-          {data.personal.location && <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {data.personal.location}</div>}
-          {data.personal.website && <div className="flex items-center gap-1"><Globe className="w-3 h-3" /> {data.personal.website}</div>}
+      <header className="border-b-2 border-slate-800 pb-6 mb-8 relative">
+        <div className="flex flex-col items-center">
+            {data.personal.photo && (
+                <div className="w-32 h-32 mb-4 overflow-hidden border-2 border-slate-800">
+                    <img src={data.personal.photo} alt="Profile" className="w-full h-full object-cover grayscale" />
+                </div>
+            )}
+            <h1 className="text-4xl font-bold uppercase tracking-widest mb-2 font-serif text-center">
+            {data.personal.fullName || 'Votre Nom'}
+            </h1>
+            <h2 className="text-lg italic text-slate-600 mb-4 font-serif text-center">
+            {data.personal.jobTitle || 'Titre du poste'}
+            </h2>
+            
+            <div className="flex flex-wrap justify-center gap-4 text-xs font-sans text-slate-600 uppercase tracking-wider">
+            {data.personal.email && <div className="flex items-center gap-1"><Mail className="w-3 h-3" /> {data.personal.email}</div>}
+            {data.personal.phone && <div className="flex items-center gap-1"><Phone className="w-3 h-3" /> {data.personal.phone}</div>}
+            {data.personal.location && <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {data.personal.location}</div>}
+            {data.personal.website && <div className="flex items-center gap-1"><Globe className="w-3 h-3" /> {data.personal.website}</div>}
+            </div>
         </div>
       </header>
 
@@ -209,8 +223,12 @@ const ElegantTemplate: React.FC<PreviewProps> = ({ data }) => {
       <div className="w-[32%] h-full text-white p-8 flex flex-col gap-8 print:bg-red-500" style={{ backgroundColor: themeColor, WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
         {/* Profile */}
         <div className="text-center sm:text-left">
-           <div className="w-24 h-24 bg-white/20 rounded-full mx-auto sm:mx-0 mb-4 flex items-center justify-center text-4xl font-bold">
-             {data.personal.fullName.charAt(0)}
+           <div className="w-24 h-24 bg-white/20 rounded-full mx-auto sm:mx-0 mb-4 overflow-hidden shrink-0 flex items-center justify-center text-4xl font-bold">
+             {data.personal.photo ? (
+                <img src={data.personal.photo} alt="Profile" className="w-full h-full object-cover" />
+             ) : (
+                data.personal.fullName.charAt(0)
+             )}
            </div>
            <h1 className="text-2xl font-bold leading-tight mb-2">{data.personal.fullName}</h1>
            {/* Avoid opacity property for text crispness, use solid lighter color equivalent */}
@@ -458,8 +476,24 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
     // Otherwise text should default to Secondary.
     const contactColor = isBanner ? colors.background : colors.secondary;
 
+    const Photo = () => {
+      if (!data.personal.photo) return null;
+      // Placement logic depends on header alignment
+      let photoClass = "w-32 h-32 object-cover mb-4 shrink-0";
+      if (header.style === 'floating-box' || header.style === 'banner') {
+         photoClass += " rounded-full border-4 border-white shadow-md";
+      } else {
+         photoClass += " rounded-lg";
+      }
+      
+      return <img src={data.personal.photo} alt="Profile" className={photoClass} />;
+    }
+
     return (
       <header className={containerClass} style={bgStyle}>
+         {/* If layout is single column or grid, and photo exists, show it here */}
+         {(layout === 'single-column' || layout === 'minimal-grid' || layout === 'sidebar-right') && <Photo />}
+         
          <h1 className={`${nameClass} font-bold leading-none mb-2`} style={{ fontFamily: fonts.heading, color: header.style === 'banner' ? 'white' : colors.text }}>
            {data.personal.fullName}
          </h1>
@@ -529,6 +563,13 @@ const UniqueTemplate: React.FC<PreviewProps> = ({ data }) => {
   const Sidebar = ({ textColor }: { textColor?: string }) => (
     <div className={`h-full flex flex-col gap-8 ${layout === 'sidebar-left' || layout === 'asymmetric' ? 'pr-6' : 'pl-6'}`} style={{ color: layout === 'asymmetric' ? colors.text : 'inherit' }}>
        
+       {/* Photo in Sidebar */}
+       {data.personal.photo && (layout === 'sidebar-left' || layout === 'asymmetric') && (
+         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 shadow-sm mx-auto mb-4">
+            <img src={data.personal.photo} alt="Profile" className="w-full h-full object-cover" />
+         </div>
+       )}
+
        {/* Contact in Sidebar if layout demands */}
        {(layout === 'sidebar-left' || layout === 'sidebar-right' || layout === 'asymmetric') && (
          <div>
