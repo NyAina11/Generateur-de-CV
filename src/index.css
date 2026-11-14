@@ -1,0 +1,294 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-slate-100 font-sans text-slate-800 antialiased;
+  }
+
+  /* Anneau de focus visible au clavier, cohérent dans toute l'application. */
+  :focus-visible {
+    outline: 2px solid #4f46e5;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* --- Formulaires de l'éditeur --- */
+  .field-label {
+    @apply mb-1 block text-xs font-medium text-slate-600;
+  }
+
+  .input-field {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors placeholder:text-slate-400;
+  }
+
+  .input-field:hover {
+    @apply border-slate-400;
+  }
+
+  .input-field:focus {
+    @apply border-indigo-500 outline-none ring-2 ring-indigo-500/25;
+  }
+
+  .input-field:disabled {
+    @apply cursor-not-allowed bg-slate-100 text-slate-500;
+  }
+
+  .icon-button {
+    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors;
+  }
+
+  .icon-button:hover:not(:disabled) {
+    @apply bg-slate-200 text-slate-800;
+  }
+
+  .icon-button:disabled {
+    @apply cursor-not-allowed opacity-35;
+  }
+
+  .ai-button {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold text-indigo-700 transition-colors;
+  }
+
+  .ai-button:hover:not(:disabled) {
+    @apply bg-indigo-50;
+  }
+
+  .ai-button:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  .add-button {
+    @apply flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-indigo-200 py-2.5 text-sm font-medium text-indigo-700 transition-colors;
+  }
+
+  .add-button:hover {
+    @apply border-indigo-300 bg-indigo-50;
+  }
+
+  /* --- Zone d'aperçu : la feuille posée sur le « bureau » --- */
+  .cv-desk {
+    @apply flex flex-col items-center overflow-auto bg-slate-200/70 px-4 pb-24 pt-6 lg:pb-10;
+  }
+
+  .cv-sizer {
+    @apply shrink-0;
+  }
+
+  .cv-scaler {
+    width: 210mm;
+    transform-origin: top left;
+  }
+
+  .cv-desk-note {
+    @apply mt-4 text-center text-xs text-slate-500;
+  }
+
+  /* --- La feuille A4 --- */
+  .cv-page {
+    position: relative;
+    box-sizing: border-box;
+    overflow-x: clip;
+    font-size: 16px;
+    line-height: 1.5;
+    box-shadow:
+      0 1px 2px rgb(15 23 42 / 0.08),
+      0 12px 32px -8px rgb(15 23 42 / 0.25);
+  }
+
+  .cv-page a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cv-decor {
+    @apply pointer-events-none absolute inset-0 overflow-hidden;
+  }
+
+  .cv-flow {
+    position: relative;
+  }
+
+  .cv-flow-head {
+    display: none;
+  }
+
+  /* Repère de saut de page, visible à l'écran uniquement. */
+  .cv-page-break {
+    @apply pointer-events-none absolute inset-x-0 z-20 border-t-2 border-dashed border-rose-400/80 print:hidden;
+  }
+
+  .cv-page-break span {
+    @apply absolute right-2 top-1 rounded bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white;
+  }
+}
+
+/* Barre de défilement discrète */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+/* Animations : uniquement en réponse à une action (ouverture, notification). */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-reveal {
+  animation: reveal 0.18s ease-out;
+}
+.animate-fade {
+  animation: fade 0.15s ease-out;
+}
+.animate-rise {
+  animation: rise 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Impression / export PDF --- */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Le fond du CV couvre toute la feuille, sur chaque page (voir Preview.tsx). */
+  html {
+    background: var(--cv-print-background, #ffffff) !important;
+  }
+
+  body {
+    background: transparent !important;
+  }
+
+  /* Imprime les fonds et couleurs tels qu'à l'écran. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .cv-desk {
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    background: none !important;
+  }
+
+  /* Annule la mise à l'échelle de l'aperçu : la feuille s'imprime à taille réelle. */
+  .cv-sizer {
+    width: auto !important;
+    height: auto !important;
+  }
+
+  .cv-scaler {
+    transform: none !important;
+  }
+
+  .cv-page {
+    box-shadow: none !important;
+  }
+
+  /*
+   * Marge haute sur les pages 2 et suivantes. Une marge @page laisserait une bande
+   * blanche sur les designs à fond coloré ; à la place, le contenu est placé dans un
+   * tableau CSS dont l'en-tête (un simple espace vide) est répété par le navigateur
+   * en haut de chaque page. Sur la première page, la marge négative l'annule.
+   */
+  .cv-flow {
+    --cv-next-page-margin: 10mm;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+
+  /* `break-inside: avoid` est la condition pour que Chrome répète l'en-tête sur chaque page. */
+  .cv-flow-head {
+    display: table-header-group;
+    break-inside: avoid;
+  }
+
+  .cv-flow-head > div {
+    height: var(--cv-next-page-margin);
+  }
+
+  .cv-flow-body {
+    display: table-row-group;
+  }
+
+  .cv-flow-content {
+    margin-top: calc(-1 * var(--cv-next-page-margin));
+  }
+
+  /* Évite de couper une expérience ou une formation entre deux pages. */
+  .cv-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cv-section-title {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}

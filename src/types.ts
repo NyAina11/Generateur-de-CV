@@ -4,6 +4,7 @@ export interface Experience {
   role: string;
   startDate: string;
   endDate: string;
+  /** Poste toujours occupé : la date de fin est affichée « Présent ». */
   current: boolean;
   description: string;
 }
@@ -21,6 +22,12 @@ export interface Skill {
   level: number; // 1-5
 }
 
+export interface Language {
+  id: string;
+  name: string;
+  level: string; // ex : « Courant », « B2 »
+}
+
 export interface PersonalInfo {
   fullName: string;
   jobTitle: string;
@@ -28,15 +35,17 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   website: string;
-  photo?: string; // Base64 image string
+  photo?: string; // Image encodée en data URL (base64)
   summary: string;
 }
 
 export type TemplateId = 'modern' | 'classic' | 'elegant' | 'unique';
 
+export type DesignLayout = 'sidebar-left' | 'sidebar-right' | 'single-column' | 'minimal-grid' | 'asymmetric';
+
 export interface DesignConfig {
-  layout: 'sidebar-left' | 'sidebar-right' | 'single-column' | 'minimal-grid' | 'asymmetric';
-  
+  layout: DesignLayout;
+
   header: {
     alignment: 'left' | 'center' | 'right';
     style: 'clean' | 'banner' | 'floating-box' | 'underlined';
@@ -49,6 +58,12 @@ export interface DesignConfig {
     spacing: 'compact' | 'normal' | 'spacious';
   };
 
+  /**
+   * primary : couleur dominante (titres, bandeau, barre latérale)
+   * secondary : texte secondaire (dates, entreprises)
+   * background : fond de page · text : texte courant
+   * accent : touches décoratives (bordures, puces, formes)
+   */
   colors: {
     primary: string;
     secondary: string;
@@ -74,14 +89,12 @@ export interface CVData {
   experience: Experience[];
   education: Education[];
   skills: Skill[];
+  languages: Language[];
+  /** Centres d'intérêt, en texte libre (séparés par des virgules). */
+  interests: string;
   themeColor: string;
   templateId: TemplateId;
-  designConfig?: DesignConfig; // Added for the 'unique' template
+  designConfig?: DesignConfig; // Utilisé par le modèle « unique » généré par l'IA
 }
 
-export type SectionType = 'personal' | 'experience' | 'education' | 'skills';
-
-export enum AIActionType {
-  GENERATE_SUMMARY = 'GENERATE_SUMMARY',
-  IMPROVE_EXPERIENCE = 'IMPROVE_EXPERIENCE',
-}
+export type CVUpdater = (update: (previous: CVData) => CVData) => void;
