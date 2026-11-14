@@ -10,7 +10,16 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
 *.local
+
+# Secrets : ne jamais versionner la clé API
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel
 
 # Editor directories and files
 .vscode/*
